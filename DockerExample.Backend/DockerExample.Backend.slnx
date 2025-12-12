@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DockerExample.Application/DockerExample.Application.csproj" />
+    <Project Path="src/DockerExample.Core/DockerExample.Core.csproj" />
+    <Project Path="src/DockerExample.Infrastructure/DockerExample.Infrastructure.csproj" />
+    <Project Path="src/DockerExample.Web/DockerExample.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DockerExample.IntegrationTests/DockerExample.IntegrationTests.csproj" />
+    <Project Path="tests/DockerExample.UnitTests/DockerExample.UnitTests.csproj" />
+  </Folder>
+</Solution>
