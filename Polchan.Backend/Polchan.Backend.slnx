@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Polchan.Application/Polchan.Application.csproj" />
+    <Project Path="src/Polchan.Core/Polchan.Core.csproj" />
+    <Project Path="src/Polchan.Infrastructure/Polchan.Infrastructure.csproj" />
+    <Project Path="src/Polchan.Web/Polchan.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Polchan.IntegrationTests/Polchan.IntegrationTests.csproj" />
+    <Project Path="tests/Polchan.UnitTests/Polchan.UnitTests.csproj" />
+  </Folder>
+</Solution>
