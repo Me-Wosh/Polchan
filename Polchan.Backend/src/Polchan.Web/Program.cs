@@ -6,4 +6,5 @@ builder.Services.AddServices(builder);
 var app = builder.Build();
 app.ConfigureApp();
 app.ConfigureStartup();
+app.MapEndpoints();
 app.Run();

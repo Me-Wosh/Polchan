@@ -7,6 +7,8 @@ namespace Polchan.Core.Users.Entities;
 
 public class User : BaseEntity
 {
+    private const int RefreshTokenExpirationInDays = 7;
+
     private readonly List<Post> _posts = [];
     private readonly List<Comment> _comments = [];
     private readonly List<Reaction> _reactions = [];
@@ -37,6 +39,11 @@ public class User : BaseEntity
         UserRole userRole
     )
     {
+        var validationResult = Validate(email, username, passwordHash);
+
+        if (!validationResult.IsSuccess)
+            return validationResult.Map();
+
         return new User
         {
             Email = email,
@@ -44,5 +51,46 @@ public class User : BaseEntity
             PasswordHash = passwordHash,
             UserRole = userRole
         };
+    }
+
+    public Result<RefreshToken> AddRefreshToken(string token)
+    {
+        var expirationDate = DateTime.UtcNow.AddDays(RefreshTokenExpirationInDays);
+        var refreshToken = RefreshToken.Create(token, expirationDate);
+
+        if (!refreshToken.IsSuccess)
+            return refreshToken.Map();
+
+        _refreshTokens.Add(refreshToken);
+        return Result.Success(refreshToken);
+    }
+
+    public Result<RefreshToken> ReplaceRefreshToken(Guid oldTokenId, string newToken)
+    {
+        var refreshToken = _refreshTokens.SingleOrDefault(rt => rt.Id == oldTokenId);
+        
+        if (refreshToken is null)
+            return Result.Error("Old refresh token not found");
+
+        var expirationDate = DateTime.UtcNow.AddDays(RefreshTokenExpirationInDays);
+        return refreshToken.Update(newToken, expirationDate);
+    }
+
+    private static Result Validate(string email, string username, string passwordHash)
+    {
+        var errors = new List<ValidationError>();
+
+        if (string.IsNullOrWhiteSpace(email))
+            errors.Add(new ValidationError("Email cannot be empty"));
+
+        if (string.IsNullOrWhiteSpace(username))
+            errors.Add(new ValidationError("Username cannot be empty"));
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            errors.Add(new ValidationError("Password cannot be empty"));
+
+        return errors.Count == 0
+            ? Result.Success()
+            : Result.Invalid(errors);
     }
 }

@@ -3,6 +3,7 @@
     <Project Path="src/Polchan.Application/Polchan.Application.csproj" />
     <Project Path="src/Polchan.Core/Polchan.Core.csproj" />
     <Project Path="src/Polchan.Infrastructure/Polchan.Infrastructure.csproj" />
+    <Project Path="src/Polchan.Shared/Polchan.Shared.csproj" />
     <Project Path="src/Polchan.Web/Polchan.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
