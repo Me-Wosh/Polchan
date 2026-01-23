@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Polchan.Infrastructure;
 
@@ -11,9 +12,11 @@ using Polchan.Infrastructure;
 namespace Polchan.Infrastructure.Migrations
 {
     [DbContext(typeof(PolchanDbContext))]
-    partial class PolchanDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260123190017_AddThreadCategoryAndThreadSubscriptionsEntity")]
+    partial class AddThreadCategoryAndThreadSubscriptionsEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -10,5 +10,6 @@ public static class EndpointsConfiguration
         var api = app.MapGroup("/api");
         api.AddEndpointFilter<ArdalisResultMapper>();
         api.MapAuthEndpoints();
+        api.MapThreadEndpoints();
     }
 }

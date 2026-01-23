@@ -1,5 +1,6 @@
 using Ardalis.Result;
 using Polchan.Core.Posts.Entities;
+using Polchan.Core.Threads.Enums;
 using Polchan.Core.Users.Enums;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 
@@ -14,6 +15,7 @@ public class User : BaseEntity
     private readonly List<Reaction> _reactions = [];
     private readonly List<RefreshToken> _refreshTokens = [];
     private readonly List<Thread> _ownedThreads = [];
+    private readonly List<Thread> _subscribedThreads = [];
 
     private User() { }
 
@@ -31,6 +33,7 @@ public class User : BaseEntity
     public IReadOnlyCollection<RefreshToken> RefreshTokens => _refreshTokens;
 
     public IReadOnlyCollection<Thread> OwnedThreads => _ownedThreads;
+    public IReadOnlyCollection<Thread> SubscribedThreads => _subscribedThreads;
 
     public static Result<User> Create(
         string email,
@@ -74,6 +77,35 @@ public class User : BaseEntity
 
         var expirationDate = DateTime.UtcNow.AddDays(RefreshTokenExpirationInDays);
         return refreshToken.Update(newToken, expirationDate);
+    }
+
+    public Result AddOwnedThread(Thread thread)
+    {
+        if (_subscribedThreads.Any(t => t.Id == thread.Id))
+            return Result.Error($"User is already the owner of thread with id: '{thread.Id}'");
+
+        _ownedThreads.Add(thread);
+        return Result.Success();
+    }
+
+    public Result SubscribeThread(Thread thread)
+    {
+        if (_subscribedThreads.Any(t => t.Id == thread.Id))
+            return Result.Error($"User already subscribes thread with id: '{thread.Id}'");
+
+        _subscribedThreads.Add(thread);
+        return Result.Success();
+    }
+
+    public Result UnsubscribeThread(Guid threadId)
+    {
+        var thread = _subscribedThreads.SingleOrDefault(t => t.Id == threadId);
+
+        if (thread is null)
+            return Result.Error($"User doesn't subscribe thread with id: '{threadId}'");
+
+        _subscribedThreads.Remove(thread);
+        return Result.Success();
     }
 
     private static Result Validate(string email, string username, string passwordHash)
