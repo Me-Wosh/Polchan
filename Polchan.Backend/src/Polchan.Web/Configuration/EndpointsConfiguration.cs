@@ -1,3 +1,4 @@
+using System.Reflection;
 using Polchan.Web.Endpoints;
 using Polchan.Web.Endpoints.Filters;
 
@@ -9,7 +10,16 @@ public static class EndpointsConfiguration
     {
         var api = app.MapGroup("/api");
         api.AddEndpointFilter<ArdalisResultMapper>();
-        api.MapAuthEndpoints();
-        api.MapThreadEndpoints();
+        api.DisableAntiforgery();
+        
+        var endpointGroups = Assembly.GetExecutingAssembly()
+            .DefinedTypes
+            .Where(t => t.IsAssignableTo(typeof(IEndpointGroup)) && !t.IsInterface && !t.IsAbstract);
+
+        foreach (var group in endpointGroups)
+        {
+            var instance = Activator.CreateInstance(group) as IEndpointGroup;
+            instance?.MapEndpoints(api);
+        }
     }
 }

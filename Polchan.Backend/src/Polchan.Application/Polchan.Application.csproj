@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../Polchan.Core/Polchan.Core.csproj" />
-    <ProjectReference Include="../Polchan.Infrastructure/Polchan.Infrastructure.csproj" />
     <ProjectReference Include="../Polchan.Shared/Polchan.Shared.csproj" />
   </ItemGroup>
 

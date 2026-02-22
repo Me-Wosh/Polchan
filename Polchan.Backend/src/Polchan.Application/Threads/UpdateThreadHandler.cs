@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
+using Polchan.Application.Interfaces;
 using Polchan.Core.Threads.Enums;
-using Polchan.Infrastructure;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Threads;
@@ -13,7 +12,7 @@ public record UpdateThreadCommand([Required] Guid Id, string? Name, ThreadCatego
 
 public class UpdateThreadHandler(
     IUserAccessor userAccessor,
-    PolchanDbContext dbContext
+    IPolchanDbContext dbContext
 ) : ICommandHandler<UpdateThreadCommand, Unit>
 {
     public async Task<Result<Unit>> Handle(UpdateThreadCommand command, CancellationToken cancellationToken)
@@ -51,7 +50,6 @@ public class UpdateThreadHandler(
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
-
         return Unit.Value;
     }
 }

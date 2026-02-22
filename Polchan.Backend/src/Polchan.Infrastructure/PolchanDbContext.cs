@@ -4,10 +4,11 @@ using Polchan.Core.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 using Polchan.Core;
+using Polchan.Application.Interfaces;
 
 namespace Polchan.Infrastructure;
 
-public class PolchanDbContext(DbContextOptions<PolchanDbContext> options) : DbContext(options)
+public class PolchanDbContext(DbContextOptions<PolchanDbContext> options) : DbContext(options), IPolchanDbContext
 {
     public DbSet<Thread> Threads => Set<Thread>();
     public DbSet<Post> Posts => Set<Post>();

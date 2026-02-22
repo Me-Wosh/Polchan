@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
-using Polchan.Infrastructure;
+using Polchan.Application.Interfaces;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Auth;
@@ -11,7 +10,7 @@ public record LoginUserCommand([Required] string Email, [Required] string Passwo
 
 public class LoginUserHandler(
     IPasswordHasher passwordHasher,
-    PolchanDbContext dbContext,
+    IPolchanDbContext dbContext,
     ITokensService tokensService,
     IUserAccessor userAccessor
 ) : ICommandHandler<LoginUserCommand, string>
@@ -31,17 +30,17 @@ public class LoginUserHandler(
         if (!hashResult)
             return Result.Unauthorized("Invalid e-mail or password");
 
-        var jwt = tokensService.CreateJwt(user);
+        var token = tokensService.CreateToken(user);
 
         return await Result.Success()
-            .Bind(_ => jwt)
+            .Bind(_ => token)
             .Bind(_ => tokensService.CreateRefreshToken())
             .Bind(token => user.AddRefreshToken(token))
             .Bind(refreshToken => userAccessor.SetRefreshToken(refreshToken))
             .BindAsync(async _ =>
             {
                 await dbContext.SaveChangesAsync(cancellationToken);
-                return Result.Success(jwt);
+                return Result.Success(token);
             });
     }
 }

@@ -2,10 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
+using Polchan.Application.Interfaces;
 using Polchan.Core.Users.Entities;
 using Polchan.Core.Users.Enums;
-using Polchan.Infrastructure;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Auth;
@@ -18,7 +17,7 @@ public record RegisterUserCommand(
 
 public class RegisterUserHandler(
     IPasswordHasher passwordHasher,
-    PolchanDbContext dbContext
+    IPolchanDbContext dbContext
 ) : ICommandHandler<RegisterUserCommand, Unit>
 {
     public async Task<Result<Unit>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)

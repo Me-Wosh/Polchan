@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Ardalis.Result;
-using Polchan.Application.Auth.Services;
+using Polchan.Application.Interfaces;
 using Polchan.Core.Users.Entities;
 
 namespace Polchan.Web.Services;

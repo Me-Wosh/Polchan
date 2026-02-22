@@ -1,26 +1,27 @@
 using Ardalis.Result;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Polchan.Application.Pagination;
 using Polchan.Application.Threads;
 using Polchan.Application.Threads.Responses;
 
 namespace Polchan.Web.Endpoints;
 
-public static class ThreadEndpoints
+public class ThreadEndpoints : IEndpointGroup
 {
-    public static void MapThreadEndpoints(this RouteGroupBuilder builder)
+    public void MapEndpoints(RouteGroupBuilder builder)
     {
-        var group = builder.MapGroup("/threads");
+        var group = builder
+            .MapGroup("/threads")
+            .RequireAuthorization();
 
-        group.RequireAuthorization();
-
-        group.MapGet("/", async Task<Result<List<ThreadResponse>>> (
-            [FromBody] GetAllThreadsQuery query,
+        group.MapGet("/", async Task<Result<PaginatedList<ThreadResponse>>> (
+            [FromQuery] PaginationQuery paginationQuery,
             IMediator mediator,
             CancellationToken cancellationToken
         ) =>
         {
-            return await mediator.Send(query, cancellationToken);
+            return await mediator.Send(new GetAllThreadsQuery(paginationQuery), cancellationToken);
         });
 
         group.MapPost("/", async Task<Result<Unit>> (
@@ -32,16 +33,16 @@ public static class ThreadEndpoints
             return await mediator.Send(command, cancellationToken);
         });
 
-        group.MapGet("/user-subscribed", async Task<Result<List<ThreadResponse>>> (
-            [FromBody] GetUserSubscribedThreadsQuery query,
+        group.MapGet("/user-subscribed", async Task<Result<PaginatedList<ThreadResponse>>> (
+            [FromQuery] PaginationQuery paginationQuery,
             IMediator mediator,
             CancellationToken cancellationToken
         ) =>
         {
-            return await mediator.Send(query, cancellationToken);
+            return await mediator.Send(new GetUserSubscribedThreadsQuery(paginationQuery), cancellationToken);
         });
 
-        group.MapPatch("/{id:guid}", async Task<Result<Unit>> (
+        group.MapPut("/{id:guid}", async Task<Result<Unit>> (
             [FromRoute] Guid id,
             [FromBody] UpdateThreadCommand command,
             IMediator mediator,

@@ -81,7 +81,7 @@ public class User : BaseEntity
 
     public Result AddOwnedThread(Thread thread)
     {
-        if (_subscribedThreads.Any(t => t.Id == thread.Id))
+        if (_ownedThreads.Any(t => t.Id == thread.Id))
             return Result.Error($"User is already the owner of thread with id: '{thread.Id}'");
 
         _ownedThreads.Add(thread);
@@ -105,6 +105,15 @@ public class User : BaseEntity
             return Result.Error($"User doesn't subscribe thread with id: '{threadId}'");
 
         _subscribedThreads.Remove(thread);
+        return Result.Success();
+    }
+
+    public Result AddPost(Post post)
+    {
+        if (_posts.Any(p => p.Id == post.Id))
+            return Result.Error($"User already added post with id: '{post.Id}'");
+
+        _posts.Add(post);
         return Result.Success();
     }
 

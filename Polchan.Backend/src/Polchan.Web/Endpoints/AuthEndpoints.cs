@@ -5,9 +5,9 @@ using Polchan.Application.Auth;
 
 namespace Polchan.Web.Endpoints;
 
-public static class AuthEndpoints
+public class AuthEndpoints : IEndpointGroup
 {
-    public static void MapAuthEndpoints(this RouteGroupBuilder builder)
+    public void MapEndpoints(RouteGroupBuilder builder)
     {
         var group = builder.MapGroup("/auth");
 

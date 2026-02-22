@@ -1,7 +1,6 @@
 using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
-using Polchan.Infrastructure;
+using Polchan.Application.Interfaces;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Auth;
@@ -10,7 +9,7 @@ public record RefreshTokensCommand : ICommand<string>;
 
 public class RefreshTokensHandler(
     IUserAccessor userAccessor,
-    PolchanDbContext dbContext,
+    IPolchanDbContext dbContext,
     ITokensService tokensService
 ) : ICommandHandler<RefreshTokensCommand, string>
 {
@@ -41,17 +40,17 @@ public class RefreshTokensHandler(
         if (unexpiredRefreshToken is null)
             return Result.Unauthorized("Invalid refresh token. Check the refresh token or login again");
 
-        var jwt = tokensService.CreateJwt(user);
+        var token = tokensService.CreateToken(user);
 
         return await Result.Success()
-            .Bind(_ => jwt)
+            .Bind(_ => token)
             .Bind(_ => tokensService.CreateRefreshToken())
             .Bind(token => user.ReplaceRefreshToken(unexpiredRefreshToken.Id, token))
             .Bind(refreshToken => userAccessor.SetRefreshToken(refreshToken))
             .BindAsync(async _ =>
             {
                 await dbContext.SaveChangesAsync(cancellationToken);
-                return Result.Success(jwt);
+                return Result.Success(token);
             });
     }
 }

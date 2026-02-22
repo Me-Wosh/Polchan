@@ -2,8 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
-using Polchan.Infrastructure;
+using Polchan.Application.Interfaces;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Threads;
@@ -12,7 +11,7 @@ public record UnsubscribeThreadCommand([Required] Guid Id) : ICommand<Unit>;
 
 public class UnsubscribeThreadHandler(
     IUserAccessor userAccessor,
-    PolchanDbContext dbContext
+    IPolchanDbContext dbContext
 ) : ICommandHandler<UnsubscribeThreadCommand, Unit>
 {
     public async Task<Result<Unit>> Handle(UnsubscribeThreadCommand command, CancellationToken cancellationToken)

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Polchan.Application/Polchan.Application.csproj" />
     <ProjectReference Include="../Polchan.Core/Polchan.Core.csproj" />
   </ItemGroup>
 

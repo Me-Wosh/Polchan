@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Auth.Services;
+using Polchan.Application.Interfaces;
 using Polchan.Core.Threads.Enums;
-using Polchan.Infrastructure;
 using Polchan.Shared.MediatR;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 
@@ -14,7 +13,7 @@ public record CreateThreadCommand([Required] string Name, [Required] ThreadCateg
 
 public class CreateThreadHandler(
     IUserAccessor userAccessor,
-    PolchanDbContext dbContext
+    IPolchanDbContext dbContext
 ) : ICommandHandler<CreateThreadCommand, Unit>
 {
     public async Task<Result<Unit>> Handle(CreateThreadCommand command, CancellationToken cancellationToken)
