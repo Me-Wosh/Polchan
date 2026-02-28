@@ -4,7 +4,7 @@ using Polchan.Core.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 using Polchan.Core;
-using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 
 namespace Polchan.Infrastructure;
 

@@ -4,7 +4,7 @@ using Polchan.Core.Resources.Entities;
 using Polchan.Core.Users.Entities;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 
-namespace Polchan.Application.Interfaces;
+namespace Polchan.Core.Interfaces;
 
 public interface IPolchanDbContext
 {

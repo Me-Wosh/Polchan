@@ -8,8 +8,6 @@ namespace Polchan.Core.Users.Entities;
 
 public class User : BaseEntity
 {
-    private const int RefreshTokenExpirationInDays = 7;
-
     private readonly List<Post> _posts = [];
     private readonly List<Comment> _comments = [];
     private readonly List<Reaction> _reactions = [];
@@ -35,31 +33,20 @@ public class User : BaseEntity
     public IReadOnlyCollection<Thread> OwnedThreads => _ownedThreads;
     public IReadOnlyCollection<Thread> SubscribedThreads => _subscribedThreads;
 
-    public static Result<User> Create(
-        string email,
-        string username,
-        string passwordHash,
-        UserRole userRole
-    )
+    public static Result<User> Create(string email, string username, string passwordHash, UserRole userRole)
     {
-        var validationResult = Validate(email, username, passwordHash);
+        var user = new User();
 
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
-        return new User
-        {
-            Email = email,
-            Username = username,
-            PasswordHash = passwordHash,
-            UserRole = userRole
-        };
+        return Result.Success()
+            .Bind(_ => user.UpdateEmail(email))
+            .Bind(_ => user.UpdateUsername(username))
+            .Bind(_ => user.UpdatePasswordHash(passwordHash))
+            .Bind(_ => user.UpdateUserRole(userRole));
     }
 
     public Result<RefreshToken> AddRefreshToken(string token)
     {
-        var expirationDate = DateTime.UtcNow.AddDays(RefreshTokenExpirationInDays);
-        var refreshToken = RefreshToken.Create(token, expirationDate);
+        var refreshToken = RefreshToken.Create(token);
 
         if (!refreshToken.IsSuccess)
             return refreshToken.Map();
@@ -75,8 +62,7 @@ public class User : BaseEntity
         if (refreshToken is null)
             return Result.Error("Old refresh token not found");
 
-        var expirationDate = DateTime.UtcNow.AddDays(RefreshTokenExpirationInDays);
-        return refreshToken.Update(newToken, expirationDate);
+        return refreshToken.Update(newToken);
     }
 
     public Result AddOwnedThread(Thread thread)
@@ -117,21 +103,40 @@ public class User : BaseEntity
         return Result.Success();
     }
 
-    private static Result Validate(string email, string username, string passwordHash)
+    private Result<User> UpdateEmail(string email)
     {
-        var errors = new List<ValidationError>();
+        email = email.Trim();
 
-        if (string.IsNullOrWhiteSpace(email))
-            errors.Add(new ValidationError("Email cannot be empty"));
+        if (string.IsNullOrEmpty(email))
+            return Result.Invalid(new ValidationError("Email cannot be empty"));
 
-        if (string.IsNullOrWhiteSpace(username))
-            errors.Add(new ValidationError("Username cannot be empty"));
+        Email = email;
+        return Result.Success(this);
+    }
 
+    private Result<User> UpdateUsername(string username)
+    {
+        username = username.Trim();
+
+        if (string.IsNullOrEmpty(username))
+            return Result.Invalid(new ValidationError("Username cannot be empty"));
+
+        Username = username;
+        return Result.Success(this);
+    }
+
+    private Result<User> UpdatePasswordHash(string passwordHash)
+    {
         if (string.IsNullOrWhiteSpace(passwordHash))
-            errors.Add(new ValidationError("Password cannot be empty"));
+            return Result.Invalid(new ValidationError("Password cannot be empty"));
 
-        return errors.Count == 0
-            ? Result.Success()
-            : Result.Invalid(errors);
+        PasswordHash = passwordHash;
+        return Result.Success(this);
+    }
+
+    private Result<User> UpdateUserRole(UserRole userRole)
+    {
+        UserRole = userRole;
+        return Result.Success(this);
     }
 }

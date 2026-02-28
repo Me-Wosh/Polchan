@@ -23,16 +23,21 @@ public class Thread : BaseEntity
 
     public static Result<Thread> Create(string name, User owner, ThreadCategory category)
     {
-        return new Thread
-        {
-            Name = name,
-            Owner = owner,
-            Category = category
-        };
+        var thread = new Thread();
+
+        return Result.Success()
+            .Bind(_ => thread.UpdateName(name))
+            .Bind(_ => thread.UpdateOwner(owner))
+            .Bind(_ => thread.UpdateCategory(category));
     }
 
     public Result<Thread> UpdateName(string name)
     {
+        name = name.Trim();
+
+        if (string.IsNullOrEmpty(name))
+            return Result.Invalid(new ValidationError("Thread name cannot be empty"));
+
         Name = name;
         return this;
     }
@@ -40,6 +45,12 @@ public class Thread : BaseEntity
     public Result<Thread> UpdateCategory(ThreadCategory category)
     {
         Category = category;
+        return this;
+    }
+
+    private Result<Thread> UpdateOwner(User owner)
+    {
+        Owner = owner;
         return this;
     }
 }

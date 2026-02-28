@@ -11,6 +11,8 @@ using Polchan.Web.Middleware;
 using Polchan.Application.Interfaces;
 using Polchan.Infrastructure.Storage.Services;
 using Polchan.Infrastructure.Auth.Services;
+using Polchan.Core.Posts.Services;
+using Polchan.Core.Interfaces;
 
 namespace Polchan.Web.Configuration;
 
@@ -66,6 +68,10 @@ public static class ServicesConfiguration
         services.AddScoped<IStorageService, LocalStorageService>();
         services.AddScoped<ITokensService, TokensService>();
         services.AddScoped<IUserAccessor, UserAccessor>();
+
+        // Domain services
+        services.AddScoped<PostReactionService>();
+        services.AddScoped<CommentReactionService>();
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)

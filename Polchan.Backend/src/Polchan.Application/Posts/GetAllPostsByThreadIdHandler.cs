@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Application.Interfaces;
 using Polchan.Application.Pagination;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Posts.Enums;
 using Polchan.Shared.MediatR;
 
@@ -11,9 +11,9 @@ namespace Polchan.Application.Posts;
 public record GetAllPostsByThreadIdQuery(
     [Required] Guid ThreadId,
     [Required] PaginationQuery PaginationQuery
-) : IQuery<PaginatedList<PostListResponse>>;
+) : IQuery<PaginatedList<PostListItemResponse>>;
 
-public record PostListResponse
+public record PostListItemResponse
 {
     public Guid Id { get; init; }
     public required string Title { get; init; }
@@ -26,9 +26,12 @@ public record PostListResponse
 
 public class GetAllPostsByThreadIdHandler(
     IPolchanDbContext dbContext
-) : IQueryHandler<GetAllPostsByThreadIdQuery, PaginatedList<PostListResponse>>
+) : IQueryHandler<GetAllPostsByThreadIdQuery, PaginatedList<PostListItemResponse>>
 {
-    public async Task<Result<PaginatedList<PostListResponse>>> Handle(GetAllPostsByThreadIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedList<PostListItemResponse>>> Handle(
+        GetAllPostsByThreadIdQuery query,
+        CancellationToken cancellationToken
+    )
     {
         return await dbContext
             .Posts
@@ -37,7 +40,7 @@ public class GetAllPostsByThreadIdHandler(
             .Include(p => p.Reactions)
             .Include(p => p.Comments)
             .Where(p => p.ThreadId == query.ThreadId)
-            .Select(p => new PostListResponse
+            .Select(p => new PostListItemResponse
             {
                 Id = p.Id,
                 Title = p.Title,

@@ -3,6 +3,7 @@ using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Users.Entities;
 using Polchan.Core.Users.Enums;
 using Polchan.Shared.MediatR;
@@ -33,7 +34,7 @@ public class RegisterUserHandler(
 
         return await Result.Success()
             .Bind(_ => passwordHasher.Hash(command.Password.Trim()))
-            .Bind(password => User.Create(command.Email.Trim(), command.Username.Trim(), password, UserRole.User))
+            .Bind(password => User.Create(command.Email, command.Username, password, UserRole.User))
             .BindAsync(async user =>
             {
                 await dbContext.Users.AddAsync(user, cancellationToken);

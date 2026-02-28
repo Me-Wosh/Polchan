@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Polchan.Application.Files;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Posts.Entities;
 using Polchan.Core.Resources.Entities;
 using Polchan.Shared.MediatR;
@@ -32,7 +32,7 @@ public class CreatePostHandler(
         if (!userId.IsSuccess)
             return userId.Map();
 
-        var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        var user = await dbContext.Users.FindAsync([userId], cancellationToken);
 
         if (user is null)
             return Result.Unauthorized();

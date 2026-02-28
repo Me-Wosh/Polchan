@@ -3,6 +3,7 @@ using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Threads;
@@ -28,10 +29,10 @@ public class SubscribeThreadHandler(
         if (user is null)
             return Result.Unauthorized();
             
-        var thread = await dbContext.Threads.SingleOrDefaultAsync(t => t.Id == command.Id, cancellationToken);
+        var thread = await dbContext.Threads.FindAsync([command.Id], cancellationToken);
 
         if (thread is null)
-            return Result.NotFound($"Thread with id: '{command.Id}' not found");
+            return Result.NotFound("Thread not found");
 
         return await Result.Success()
             .Bind(_ => user.SubscribeThread(thread))

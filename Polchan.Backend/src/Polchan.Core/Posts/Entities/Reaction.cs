@@ -19,11 +19,29 @@ public class Reaction : BaseEntity
     public Guid? CommentId { get; private set; }
     public Comment? Comment { get; private set; }
 
-    public static Result<Reaction> Create(ReactionType reactionType)
+    public static Result<Reaction> CreateForPost(ReactionType reactionType, Guid ownerId, Guid postId)
     {
         return new Reaction
         {
-            ReactionType = reactionType
+            ReactionType = reactionType,
+            OwnerId = ownerId,
+            PostId = postId
         };
+    }
+
+    public static Result<Reaction> CreateForComment(ReactionType reactionType, Guid ownerId, Guid commentId)
+    {
+        return new Reaction
+        {
+            ReactionType = reactionType,
+            OwnerId = ownerId,
+            CommentId = commentId
+        };
+    }
+
+    public Result UpdateReactionType(ReactionType reactionType)
+    {
+        ReactionType = reactionType;
+        return Result.Success();
     }
 }

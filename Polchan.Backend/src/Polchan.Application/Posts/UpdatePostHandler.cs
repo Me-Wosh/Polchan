@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Polchan.Application.Files;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Resources.Entities;
 using Polchan.Shared.MediatR;
 
@@ -45,7 +46,7 @@ public class UpdatePostHandler(
 
         if (!string.IsNullOrEmpty(command.Title))
         {
-            var updateTitleResult = post.UpdateTitle(command.Title.Trim());
+            var updateTitleResult = post.UpdateTitle(command.Title);
 
             if (!updateTitleResult.IsSuccess)
                 return updateTitleResult.Map();
@@ -53,7 +54,7 @@ public class UpdatePostHandler(
 
         if (!string.IsNullOrEmpty(command.Description))
         {
-            var updateDescriptionResult = post.UpdateDescription(command.Description.Trim());
+            var updateDescriptionResult = post.UpdateDescription(command.Description);
 
             if (!updateDescriptionResult.IsSuccess)
                 return updateDescriptionResult.Map();

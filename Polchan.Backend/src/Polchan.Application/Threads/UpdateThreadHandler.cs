@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Threads.Enums;
 using Polchan.Shared.MediatR;
 
@@ -25,7 +25,7 @@ public class UpdateThreadHandler(
         if (!userId.IsSuccess)
             return userId.Map();
 
-        var thread = await dbContext.Threads.SingleOrDefaultAsync(t => t.Id == command.Id, cancellationToken);
+        var thread = await dbContext.Threads.FindAsync([command.Id], cancellationToken);
 
         if (thread is null)
             return Result.NotFound("Thread not found");
@@ -35,7 +35,7 @@ public class UpdateThreadHandler(
 
         if (!string.IsNullOrEmpty(command.Name))
         {
-            var updateNameResult = thread.UpdateName(command.Name.Trim());
+            var updateNameResult = thread.UpdateName(command.Name);
 
             if (!updateNameResult.IsSuccess)
                 return updateNameResult.Map();

@@ -16,8 +16,8 @@ public class PostEndpoints : IEndpointGroup
             .MapGroup("/posts")
             .RequireAuthorization();
 
-        group.MapGet("/threads/{threadId:guid}", async Task<Result<PaginatedList<PostListResponse>>> (
-            [FromRoute] Guid threadId,
+        group.MapGet("/", async Task<Result<PaginatedList<PostListItemResponse>>> (
+            [FromQuery] Guid threadId,
             [FromQuery] PaginationQuery paginationQuery,
             IMediator mediator,
             CancellationToken cancellationToken
@@ -26,8 +26,8 @@ public class PostEndpoints : IEndpointGroup
             return await mediator.Send(new GetAllPostsByThreadIdQuery(threadId, paginationQuery), cancellationToken);
         });
 
-        group.MapPost("/threads/{threadId:guid}", async Task<Result<Unit>> (
-            [FromRoute] Guid threadId,
+        group.MapPost("/", async Task<Result<Unit>> (
+            [FromQuery] Guid threadId,
             [FromForm] CreatePostRequest request,
             IMediator mediator,
             CancellationToken cancellationToken
@@ -41,13 +41,13 @@ public class PostEndpoints : IEndpointGroup
             if (images.Any(i => !i.ContentType.StartsWith("image/")))
                 return Result.Invalid(new ValidationError("Only images can be uploaded"));
 
-            var fileUploads = images.Select(image => 
-            {
-                return new FileUpload(image.OpenReadStream(), image.FileName, image.ContentType);
-            });
+            var fileUploads = new List<FileUpload>();
 
             try
             {
+                foreach (var image in images)
+                    fileUploads.Add(new FileUpload(image.OpenReadStream(), image.FileName, image.ContentType));
+
                 return await mediator.Send(
                     new CreatePostCommand(threadId, request.Title, request.Description, fileUploads),
                     cancellationToken
@@ -61,8 +61,8 @@ public class PostEndpoints : IEndpointGroup
             }
         });
 
-        group.MapPut("/{id:guid}", async Task<Result<Unit>> (
-            [FromRoute] Guid id,
+        group.MapPut("/{postId:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid postId,
             [FromForm] UpdatePostRequest request,
             IMediator mediator,
             CancellationToken cancellationToken
@@ -76,15 +76,15 @@ public class PostEndpoints : IEndpointGroup
             if (imagesToAdd.Any(i => !i.ContentType.StartsWith("image/")))
                 return Result.Invalid(new ValidationError("Only images can be uploaded"));
 
-            var fileUploads = imagesToAdd.Select(image => 
-            {
-                return new FileUpload(image.OpenReadStream(), image.FileName, image.ContentType);
-            });
+            var fileUploads = new List<FileUpload>();
 
             try
             {
+                foreach (var image in imagesToAdd)
+                    fileUploads.Add(new FileUpload(image.OpenReadStream(), image.FileName, image.ContentType));
+
                 return await mediator.Send(
-                    new UpdatePostCommand(id, request.Title, request.Description, request.ImageIdsToRemove, fileUploads),
+                    new UpdatePostCommand(postId, request.Title, request.Description, request.ImageIdsToRemove, fileUploads),
                     cancellationToken
                 );
             }

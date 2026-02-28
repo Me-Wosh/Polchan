@@ -1,6 +1,7 @@
 using Ardalis.Result;
 using Microsoft.EntityFrameworkCore;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Auth;

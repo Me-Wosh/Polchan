@@ -4,6 +4,8 @@ namespace Polchan.Core.Users.Entities;
 
 public class RefreshToken : BaseEntity
 {
+    private const int ExpirationInDays = 7;
+
     private RefreshToken() { }    
 
     public string Token { get; private set; } = string.Empty;
@@ -12,45 +14,30 @@ public class RefreshToken : BaseEntity
     public Guid UserId { get; private set; }
     public User User { get; private set; } = null!;
 
-    public static Result<RefreshToken> Create(string token, DateTime expirationDate)
+    public static Result<RefreshToken> Create(string token)
     {
-        var validationResult = Validate(token, expirationDate);
+        var refreshToken = new RefreshToken();
 
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
-        return new RefreshToken
-        {
-            Token = token,
-            ExpirationDate = expirationDate
-        };
+        return Result.Success()
+            .Bind(_ => refreshToken.Update(token));
     }
 
-    public Result<RefreshToken> Update(string newToken, DateTime newExpirationDate)
-    {
-        var validationResult = Validate(newToken, newExpirationDate);
-
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
-        Token = newToken;
-        ExpirationDate = newExpirationDate;
-
-        return Result.Success(this);
-    }
-
-    private static Result Validate(string token, DateTime expirationDate)
+    public Result<RefreshToken> Update(string newToken)
     {
         var errors = new List<ValidationError>();
 
-        if (string.IsNullOrWhiteSpace(token))
+        if (string.IsNullOrWhiteSpace(newToken))
             errors.Add(new ValidationError("Refresh token cannot be empty"));
 
-        if (expirationDate <= DateTime.UtcNow)
-            errors.Add(new ValidationError("Refresh token expiration date cannot be older than today's date"));
+        if (newToken == Token)
+            errors.Add(new ValidationError("New refresh token must be different from the current one"));
 
-        return errors.Count == 0
-            ? Result.Success()
-            : Result.Invalid(errors);
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        Token = newToken;
+        ExpirationDate = DateTime.UtcNow.AddDays(ExpirationInDays);
+
+        return Result.Success(this);
     }
 }

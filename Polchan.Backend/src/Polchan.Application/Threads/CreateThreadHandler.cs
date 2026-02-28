@@ -3,6 +3,7 @@ using Ardalis.Result;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Polchan.Application.Interfaces;
+using Polchan.Core.Interfaces;
 using Polchan.Core.Threads.Enums;
 using Polchan.Shared.MediatR;
 using Thread = Polchan.Core.Threads.Entities.Thread;
@@ -23,12 +24,12 @@ public class CreateThreadHandler(
         if (!userId.IsSuccess)
             return userId.Map();
 
-        var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        var user = await dbContext.Users.FindAsync([userId], cancellationToken);
 
         if (user is null)
             return Result.Unauthorized();
 
-        var threadName = command.Name.Trim();
+        var threadName = command.Name;
 
         var threadExists = await dbContext.Threads.AnyAsync(t => t.Name == threadName, cancellationToken);
 
