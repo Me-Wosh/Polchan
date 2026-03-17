@@ -41,7 +41,7 @@ public class PostReactionService(IPolchanDbContext dbContext)
         return existingReaction.UpdateReactionType(reactionType);
     }
 
-    public async Task<Result> RemoveReactionAsync(Guid reactionId, Guid ownerId, CancellationToken cancellationToken)
+    public async Task<Result> DeleteReactionAsync(Guid reactionId, Guid ownerId, CancellationToken cancellationToken)
     {
         var reaction = await dbContext.Reactions.FindAsync([reactionId], cancellationToken);
 

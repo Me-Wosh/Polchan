@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Polchan.Application.Interfaces;
 using Polchan.Shared.Options;
 
-namespace Polchan.Infrastructure.Storage.Services;
+namespace Polchan.Infrastructure.ObjectStorage.Services;
 
 public class LocalStorageService(
     IOptions<StorageOptions> options,

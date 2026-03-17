@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Polchan.Core.Posts.Entities;
 using Polchan.Core.Resources.Entities;
+using Polchan.Core.Threads.Entities;
 using Polchan.Core.Users.Entities;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 
@@ -15,5 +16,6 @@ public interface IPolchanDbContext
     DbSet<User> Users { get; }
     DbSet<RefreshToken> RefreshTokens { get; }
     DbSet<Resource> Resources { get; }
+    DbSet<ThreadSubscriptions> ThreadSubscriptions { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

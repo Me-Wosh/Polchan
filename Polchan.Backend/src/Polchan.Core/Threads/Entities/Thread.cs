@@ -1,11 +1,12 @@
 ﻿using Ardalis.Result;
 using Polchan.Core.Posts.Entities;
+using Polchan.Core.Primitives;
 using Polchan.Core.Threads.Enums;
 using Polchan.Core.Users.Entities;
 
 namespace Polchan.Core.Threads.Entities;
 
-public class Thread : BaseEntity
+public class Thread : BaseEntitySoftDelete
 {
     private readonly List<Post> _posts = [];
     private readonly List<User> _subscribers = [];
@@ -46,6 +47,18 @@ public class Thread : BaseEntity
     {
         Category = category;
         return this;
+    }
+
+    public Result Delete(Guid ownerId)
+    {
+        if (OwnerId != ownerId)
+            return Result.Forbidden("User is not the owner of the thread");
+
+        if (SoftDeleted)
+            return Result.NotFound("Thread already deleted");
+
+        SoftDeleted = true;
+        return Result.Success();
     }
 
     private Result<Thread> UpdateOwner(User owner)

@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using Polchan.Core;
+using Polchan.Core.Primitives;
 
 namespace Polchan.Application.Pagination;
 

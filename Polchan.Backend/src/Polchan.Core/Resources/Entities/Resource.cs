@@ -1,5 +1,6 @@
 using Ardalis.Result;
 using Polchan.Core.Posts.Entities;
+using Polchan.Core.Primitives;
 
 namespace Polchan.Core.Resources.Entities;
 

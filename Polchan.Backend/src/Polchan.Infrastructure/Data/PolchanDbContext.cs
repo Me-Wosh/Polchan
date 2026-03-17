@@ -3,10 +3,11 @@ using Polchan.Core.Resources.Entities;
 using Polchan.Core.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 using Thread = Polchan.Core.Threads.Entities.Thread;
-using Polchan.Core;
 using Polchan.Core.Interfaces;
+using Polchan.Core.Primitives;
+using Polchan.Core.Threads.Entities;
 
-namespace Polchan.Infrastructure;
+namespace Polchan.Infrastructure.Data;
 
 public class PolchanDbContext(DbContextOptions<PolchanDbContext> options) : DbContext(options), IPolchanDbContext
 {
@@ -17,6 +18,7 @@ public class PolchanDbContext(DbContextOptions<PolchanDbContext> options) : DbCo
     public DbSet<User> Users => Set<User>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public DbSet<Resource> Resources => Set<Resource>();
+    public DbSet<ThreadSubscriptions> ThreadSubscriptions => Set<ThreadSubscriptions>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,12 +33,11 @@ public class PolchanDbContext(DbContextOptions<PolchanDbContext> options) : DbCo
 
     private void UpdateTimeStamps()
     {
-        var entries = ChangeTracker.Entries<BaseEntity>()
-            .Where(e => e.State is EntityState.Added or EntityState.Modified);
+        var modifiedEntries = ChangeTracker.Entries<BaseEntity>().Where(e => e.State is EntityState.Modified);
 
-        foreach (var entry in entries)
+        foreach (var modifiedEntry in modifiedEntries)
         {
-            entry.Entity.ModifiedAt = DateTime.UtcNow;
+            modifiedEntry.Entity.ModifiedAt = DateTime.UtcNow;
         }
     }
 }

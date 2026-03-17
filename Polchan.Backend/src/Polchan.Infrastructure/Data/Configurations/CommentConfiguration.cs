@@ -16,5 +16,11 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
             .HasMany(c => c.Reactions)
             .WithOne(r => r.Comment)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasQueryFilter(
+                "ExcludeSoftDeletedFilter",
+                c => !c.SoftDeleted && !c.Post.SoftDeleted && !c.Post.Thread.SoftDeleted
+            );
     }
 }

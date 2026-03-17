@@ -1,6 +1,6 @@
 using Ardalis.Result;
 using Polchan.Core.Posts.Entities;
-using Polchan.Core.Threads.Enums;
+using Polchan.Core.Primitives;
 using Polchan.Core.Users.Enums;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 

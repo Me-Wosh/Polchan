@@ -77,5 +77,14 @@ public class ThreadEndpoints : IEndpointGroup
         {
             return await mediator.Send(new GetAllThreadCategoriesQuery(), cancellationToken);
         });
+
+        group.MapDelete("/{id:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid id,
+            IMediator mediator,
+            CancellationToken cancellationToken
+        ) =>
+        {
+            return await mediator.Send(new DeleteThreadCommand(id), cancellationToken);
+        });
     }
 }

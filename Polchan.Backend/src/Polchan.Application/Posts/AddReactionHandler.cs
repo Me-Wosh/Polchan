@@ -19,11 +19,12 @@ public class AddReactionHandler(
 {
     public async Task<Result<Unit>> Handle(AddReactionCommand command, CancellationToken cancellationToken)
     {
-        var userId = userAccessor.GetUserId();
+        var userIdResult = userAccessor.GetUserId();
 
-        if (!userId.IsSuccess)
-            return userId.Map();
+        if (!userIdResult.IsSuccess)
+            return userIdResult.Map();
 
+        var userId = userIdResult.Value;
         var user = await dbContext.Users.FindAsync([userId], cancellationToken);
 
         if (user is null)

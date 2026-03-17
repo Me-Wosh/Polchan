@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using Polchan.Core.Primitives;
 
 namespace Polchan.Core.Users.Entities;
 

@@ -24,7 +24,7 @@ public class ReactionEndpoints : IEndpointGroup
 
         group.MapDelete("/{id:guid}", async Task<Result<Unit>> (
             [FromRoute] Guid id,
-            [FromBody] RemoveReactionCommand command,
+            [FromBody] DeleteReactionCommand command,
             IMediator mediator,
             CancellationToken cancellationToken
         ) =>

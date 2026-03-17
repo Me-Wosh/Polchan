@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Polchan.Infrastructure;
+using Polchan.Infrastructure.Data;
 
 #nullable disable
 
@@ -45,6 +45,9 @@ namespace Polchan.Infrastructure.Data.Migrations
                     b.Property<Guid>("PostId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("SoftDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
@@ -73,6 +76,9 @@ namespace Polchan.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("SoftDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("ThreadId")
                         .HasColumnType("uniqueidentifier");
@@ -194,6 +200,9 @@ namespace Polchan.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("SoftDeleted")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

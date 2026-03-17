@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Ardalis.Result;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Polchan.Application.Files;
 using Polchan.Application.Interfaces;
@@ -27,15 +28,21 @@ public class CreatePostHandler(
 {
     public async Task<Result<Unit>> Handle(CreatePostCommand command, CancellationToken cancellationToken)
     {
-        var userId = userAccessor.GetUserId();
+        var userIdResult = userAccessor.GetUserId();
 
-        if (!userId.IsSuccess)
-            return userId.Map();
+        if (!userIdResult.IsSuccess)
+            return userIdResult.Map();
 
+        var userId = userIdResult.Value;
         var user = await dbContext.Users.FindAsync([userId], cancellationToken);
 
         if (user is null)
             return Result.Unauthorized();
+
+        var threadExists = await dbContext.Threads.AnyAsync(t => t.Id == command.ThreadId, cancellationToken);
+
+        if (!threadExists)
+            return Result.NotFound("Thread not found");
 
         var createPostResult = Post.Create(command.Title, command.Description, command.ThreadId);
 

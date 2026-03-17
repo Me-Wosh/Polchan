@@ -36,6 +36,8 @@ public class ThreadConfiguration : IEntityTypeConfiguration<Thread>
             )
             .HasIndex(ts => new { ts.SubscriberId, ts.ThreadId })
             .IsUnique();
-            
+        
+        builder
+            .HasQueryFilter("ExcludeSoftDeletedFilter", t => !t.SoftDeleted);
     }
 }

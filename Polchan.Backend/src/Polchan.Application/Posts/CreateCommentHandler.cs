@@ -17,11 +17,12 @@ public class CreateCommentHandler(
 {
     public async Task<Result<Unit>> Handle(CreateCommentCommand command, CancellationToken cancellationToken)
     {
-        var userId = userAccessor.GetUserId();
+        var userIdResult = userAccessor.GetUserId();
 
-        if (!userId.IsSuccess)
-            return userId.Map();
+        if (!userIdResult.IsSuccess)
+            return userIdResult.Map();
 
+        var userId = userIdResult.Value;
         var user = await dbContext.Users.FindAsync([userId], cancellationToken);
 
         if (user is null)

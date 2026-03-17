@@ -30,5 +30,8 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasMany(p => p.Comments)
             .WithOne(c => c.Post)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasQueryFilter("ExcludeSoftDeletedFilter", p => !p.SoftDeleted && !p.Thread.SoftDeleted);
     }
 }

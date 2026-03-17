@@ -1,9 +1,10 @@
 using Ardalis.Result;
+using Polchan.Core.Primitives;
 using Polchan.Core.Users.Entities;
 
 namespace Polchan.Core.Posts.Entities;
 
-public class Comment : BaseEntity
+public class Comment : BaseEntitySoftDelete
 {
     private readonly List<Reaction> _reactions = [];
 
@@ -46,6 +47,18 @@ public class Comment : BaseEntity
 
         Content = content;
         return Result.Success(this);
+    }
+
+    public Result Delete(Guid ownerId)
+    {
+        if (OwnerId != ownerId)
+            return Result.Forbidden("User is not the owner of the comment");
+
+        if (SoftDeleted)
+            return Result.NotFound("Comment already deleted");
+
+        SoftDeleted = true;
+        return Result.Success();
     }
 
     private Result<Comment> UpdatePostId(Guid postId)

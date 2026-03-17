@@ -61,8 +61,8 @@ public class PostEndpoints : IEndpointGroup
             }
         });
 
-        group.MapPut("/{postId:guid}", async Task<Result<Unit>> (
-            [FromRoute] Guid postId,
+        group.MapPut("/{id:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid id,
             [FromForm] UpdatePostRequest request,
             IMediator mediator,
             CancellationToken cancellationToken
@@ -84,7 +84,7 @@ public class PostEndpoints : IEndpointGroup
                     fileUploads.Add(new FileUpload(image.OpenReadStream(), image.FileName, image.ContentType));
 
                 return await mediator.Send(
-                    new UpdatePostCommand(postId, request.Title, request.Description, request.ImageIdsToRemove, fileUploads),
+                    new UpdatePostCommand(id, request.Title, request.Description, request.ImageIdsToRemove, fileUploads),
                     cancellationToken
                 );
             }
@@ -94,6 +94,15 @@ public class PostEndpoints : IEndpointGroup
                 foreach (var fileUpload in fileUploads)
                     await fileUpload.Stream.DisposeAsync();
             }
+        });
+
+        group.MapDelete("/{id:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid id,
+            IMediator mediator,
+            CancellationToken cancellationToken
+        ) =>
+        {
+            return await mediator.Send(new DeletePostCommand(id), cancellationToken);
         });
     }
 }

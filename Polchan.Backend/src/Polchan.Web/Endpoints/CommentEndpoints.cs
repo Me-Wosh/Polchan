@@ -34,14 +34,23 @@ public class CommentEndpoints : IEndpointGroup
             return await mediator.Send(command with { PostId = postId }, cancellationToken);
         });
 
-        group.MapPut("/{commentId:guid}", async Task<Result<Unit>> (
-            [FromRoute] Guid commentId,
+        group.MapPut("/{id:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid id,
             [FromBody] UpdateCommentCommand command,
             IMediator mediator,
             CancellationToken cancellationToken
         ) =>
         {
-            return await mediator.Send(command with { Id = commentId }, cancellationToken);
+            return await mediator.Send(command with { Id = id }, cancellationToken);
+        });
+
+        group.MapDelete("/{id:guid}", async Task<Result<Unit>> (
+            [FromRoute] Guid id,
+            IMediator mediator,
+            CancellationToken cancellationToken
+        ) =>
+        {
+            return await mediator.Send(new DeleteCommentCommand(id), cancellationToken);
         });
     }
 }

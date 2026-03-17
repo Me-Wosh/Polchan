@@ -1,11 +1,12 @@
 using Ardalis.Result;
+using Polchan.Core.Primitives;
 using Polchan.Core.Resources.Entities;
 using Polchan.Core.Users.Entities;
 using Thread = Polchan.Core.Threads.Entities.Thread;
 
 namespace Polchan.Core.Posts.Entities;
 
-public class Post : BaseEntity
+public class Post : BaseEntitySoftDelete
 {
     private const int MaxImages = 5;
 
@@ -90,6 +91,18 @@ public class Post : BaseEntity
     public Result RemoveImages(IEnumerable<Guid> imageIds)
     {
         _images.RemoveAll(i => imageIds.Contains(i.Id));
+        return Result.Success();
+    }
+
+    public Result Delete(Guid ownerId)
+    {
+        if (OwnerId != ownerId)
+            return Result.Forbidden("User is not the owner of the post");
+
+        if (SoftDeleted)
+            return Result.NotFound("Post already deleted");
+
+        SoftDeleted = true;
         return Result.Success();
     }
 

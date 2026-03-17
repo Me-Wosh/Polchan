@@ -1,5 +1,5 @@
-using Polchan.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Polchan.Infrastructure.Data;
 
 namespace Polchan.Web.Configuration;
 

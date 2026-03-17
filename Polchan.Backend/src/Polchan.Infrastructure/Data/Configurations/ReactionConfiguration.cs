@@ -21,5 +21,12 @@ public class ReactionConfiguration : IEntityTypeConfiguration<Reaction>
         // Ensure that either PostId or CommentId is set, but not both
         builder.ToTable(t => t.HasCheckConstraint("CK_Reaction_PostOrComment", 
             "(PostId IS NOT NULL AND CommentId IS NULL) OR (PostId IS NULL AND CommentId IS NOT NULL)"));
+
+        builder
+            .HasQueryFilter(
+                "ExcludeSoftDeletedFilter",
+                r => (r.Post == null || (!r.Post.SoftDeleted && !r.Post.Thread.SoftDeleted)) &&
+                     (r.Comment == null || (!r.Comment.SoftDeleted && !r.Comment.Post.SoftDeleted && !r.Comment.Post.Thread.SoftDeleted))
+            );
     }
 }

@@ -1,3 +1,5 @@
+using Polchan.Core.Primitives;
+
 namespace Polchan.Core.Threads.Entities;
 
 public class ThreadSubscriptions : BaseEntity

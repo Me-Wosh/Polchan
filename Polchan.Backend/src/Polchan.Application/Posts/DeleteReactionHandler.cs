@@ -8,16 +8,16 @@ using Polchan.Shared.MediatR;
 
 namespace Polchan.Application.Posts;
 
-public record RemoveReactionCommand(ReactionTarget Target, Guid Id) : ICommand<Unit>;
+public record DeleteReactionCommand(ReactionTarget Target, Guid Id) : ICommand<Unit>;
 
-public class RemoveReactionHandler(
+public class DeleteReactionHandler(
     IUserAccessor userAccessor,
     PostReactionService postReactionService,
     CommentReactionService commentReactionService,
     IPolchanDbContext dbContext
-) : ICommandHandler<RemoveReactionCommand, Unit>
+) : ICommandHandler<DeleteReactionCommand, Unit>
 {
-    public async Task<Result<Unit>> Handle(RemoveReactionCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(DeleteReactionCommand command, CancellationToken cancellationToken)
     {
         var userId = userAccessor.GetUserId();
 
@@ -27,8 +27,8 @@ public class RemoveReactionHandler(
         return await Result.Success()
             .BindAsync(async _ =>
                 command.Target == ReactionTarget.Post
-                    ? await postReactionService.RemoveReactionAsync(command.Id, userId, cancellationToken)
-                    : await commentReactionService.RemoveReactionAsync(command.Id, userId, cancellationToken)
+                    ? await postReactionService.DeleteReactionAsync(command.Id, userId, cancellationToken)
+                    : await commentReactionService.DeleteReactionAsync(command.Id, userId, cancellationToken)
             )
             .BindAsync(async _ =>
             {
