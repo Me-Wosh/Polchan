@@ -1,4 +1,9 @@
-.vscode
-.DS_Store
-.env
+bin
+obj
 Logs/
+
+.env
+
+.vscode
+
+.DS_Store

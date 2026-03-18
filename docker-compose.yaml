@@ -1,6 +1,6 @@
 services:
   db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU24-ubuntu-22.04@sha256:49b45a911dc535e9345fbfd7101a1bd8a1e190a5f29b877ef75387a061e5fcf0
     platform: linux/amd64
     ports:
       - 1433:1433
@@ -9,6 +9,25 @@ services:
       - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
     volumes:
       - mssql_vol:/var/opt/mssql
+  
+  backend:
+    build: ./Polchan.Backend
+    depends_on:
+      - db
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${HTTPS_CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ConnectionStrings__PolchanDB=${PolchanDB_DockerConnectionString}
+      - ConnectionStrings__HangfireConnection=${HangfireDB_DockerConnectionString}
+      - MediatR__LicenseKey=${MediatR_LicenseKey}
+      - Jwt__Secret=${Jwt_Secret}
+    volumes:
+      - ~/.aspnet/https:/https:ro
 
 volumes:
   mssql_vol:
