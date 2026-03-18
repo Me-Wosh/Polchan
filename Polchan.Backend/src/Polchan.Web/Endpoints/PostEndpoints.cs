@@ -35,9 +35,6 @@ public class PostEndpoints : IEndpointGroup
         {
             var images = request.Images ?? [];
 
-            if (images.Count > 5)
-                return Result.Invalid(new ValidationError("A maximum of 5 images can be uploaded"));
-
             if (images.Any(i => !i.ContentType.StartsWith("image/")))
                 return Result.Invalid(new ValidationError("Only images can be uploaded"));
 
@@ -69,9 +66,6 @@ public class PostEndpoints : IEndpointGroup
         ) =>
         {
             var imagesToAdd = request.ImagesToAdd ?? [];
-
-            if (imagesToAdd.Count > 5)
-                return Result.Invalid(new ValidationError("A maximum of 5 images can be uploaded"));
 
             if (imagesToAdd.Any(i => !i.ContentType.StartsWith("image/")))
                 return Result.Invalid(new ValidationError("Only images can be uploaded"));
